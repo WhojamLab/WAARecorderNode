@@ -1,0 +1,32 @@
+{
+  "name": "waarecordernode",
+  "version": "0.1.0",
+  "description": "Web Audio API recorder node with precise scheduling methods.",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify index.js > dist/WAARecorderNode-latest.js",
+    "tests.init": "node node_modules/waatest/bin/scaffold waatest; npm run tests.build",
+    "tests.build": "browserify index.js > waatest/lib-build.js ; browserify test/index.js > waatest/test-build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WhojamLab/WAARecorderNode.git"
+  },
+  "keywords": [
+    "audio",
+    "web audio",
+    "Web Audio API",
+    "waa"
+  ],
+  "author": "Sébastien Piquemal, Whojam <sebpiq@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WhojamLab/WAARecorderNode/issues"
+  },
+  "homepage": "https://github.com/WhojamLab/WAARecorderNode",
+  "devDependencies": {
+    "mocha": "2.0.x",
+    "browserify": "7.0.x",
+    "waatest": "git://github.com/sebpiq/WAATest.git#master"
+  }
+}
