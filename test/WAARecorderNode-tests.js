@@ -44,7 +44,7 @@ describe('WAARecorderNode', function() {
       bufferSourceNode.buffer = playedBuffer
       bufferSourceNode.start(playStart)
       
-      recorderNode.receiveConnection(bufferSourceNode)
+      recorderNode.recordFrom(bufferSourceNode)
       recorderNode.record(recStart, recDuration) // <rec start>, <rec duration>
       recorderNode.onended = function() {
         playedBuffer
