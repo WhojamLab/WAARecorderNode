@@ -1,9 +1,15 @@
 var assert = require('assert')
   , utils = require('waatest').utils
+  , testHelpers = require('./testHelpers')
   , WAARecorderNode = require('../index')
 
-var generateBuffer = function(context, numberOfChannels, length) {
-  var buffer = context.createBuffer(numberOfChannels, length, context.sampleRate)
+
+var nodes = []
+  , audioContext = null
+
+
+var generateBuffer = function(numberOfChannels, length) {
+  var buffer = audioContext.createBuffer(numberOfChannels, length, audioContext.sampleRate)
   for (var ch = 0; ch < buffer.numberOfChannels; ch++)
     for (var i = 0; i < buffer.length; i++)
       buffer.getChannelData(ch)[i] = (ch + 1) * i
@@ -12,16 +18,28 @@ var generateBuffer = function(context, numberOfChannels, length) {
 
 describe('WAARecorderNode', function() {
   
+  afterEach(function() {
+    testHelpers.cleanNodes(nodes)
+    nodes = []
+    audioContext = null
+  })
+
+  beforeEach(function() {
+    audioContext = new AudioContext
+  })
+
   describe('record', function() {
 
     this.timeout(5000)
 
     it('should record the desired length starting at the desired time', function(done) {
-      var context = new AudioContext()
-        , bufferSourceNode = context.createBufferSource()
-        , recorderNode = new WAARecorderNode(context)
+      var bufferSourceNode = audioContext.createBufferSource()
+        , recorderNode = new WAARecorderNode(audioContext)
         , playStart = 1.5, recStart = 2, recDuration = 1.5
-        , playedBuffer = generateBuffer(context, 2, context.sampleRate * 4)
+        , playedBuffer = generateBuffer(2, audioContext.sampleRate * 4)
+
+      nodes.push(bufferSourceNode)
+      nodes.push(recorderNode)
 
       bufferSourceNode.buffer = playedBuffer
       bufferSourceNode.start(playStart)
@@ -31,8 +49,8 @@ describe('WAARecorderNode', function() {
       recorderNode.onended = function() {
         playedBuffer
         var recordedBuffer = recorderNode.getAudioBuffer()
-          , startInd = (recStart - playStart) * context.sampleRate
-          , stopInd = startInd + recDuration * context.sampleRate
+          , startInd = (recStart - playStart) * audioContext.sampleRate
+          , stopInd = startInd + recDuration * audioContext.sampleRate
 
         assert.equal(recordedBuffer.duration, recDuration)
         assert.equal(recordedBuffer.numberOfChannels, 2)
